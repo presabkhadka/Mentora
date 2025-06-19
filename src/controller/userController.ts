@@ -121,8 +121,44 @@ export async function addContent(req: Request, res: Response) {
       userId: userId,
     });
 
-    res.status(200).json({
+    res.status(201).json({
       msg: "Content created successfully",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        msg: error.message,
+      });
+    }
+  }
+}
+
+export async function viewContent(req: Request, res: Response) {
+  try {
+    let token = req.headers.authorization?.split(" ")[1];
+
+    let decoded = jwt.verify(token!, jwtPass!);
+
+    let userEmail = (decoded as jwt.JwtPayload).email;
+
+    if (!userEmail) {
+      res.status(401).json({
+        msg: "Unauthorized access",
+      });
+    }
+
+    let existingUser = await Users.findOne({
+      email: userEmail,
+    });
+
+    let userId = existingUser!._id;
+
+    let contents = await Content.find({
+      userId,
+    });
+
+    res.status(200).json({
+      contents,
     });
   } catch (error) {
     if (error instanceof Error) {

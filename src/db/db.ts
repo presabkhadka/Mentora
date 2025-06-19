@@ -10,7 +10,7 @@ mongoose.connect(
   `mongodb+srv://${user}:${pass}@cluster0.g6wpo.mongodb.net/mentora`
 );
 
-const contentTypes = ["image", "video", "article", "audio"];
+const contentTypes = ["youtube", "twitter", "article", "blog"];
 
 const userSchema = new mongoose.Schema({
   username: String,
