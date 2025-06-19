@@ -1,7 +1,13 @@
-import mongoose, { mongo, Mongoose } from "mongoose";
+import mongoose from "mongoose";
+import dotnev from "dotenv";
+
+dotnev.config();
+
+let user = process.env.DB_USER;
+let pass = process.env.DB_PW;
 
 mongoose.connect(
-  "mongodb+srv://presabkhadka30:fRANqisUqmoJ5AkK@cluster0.g6wpo.mongodb.net/mentora"
+  `mongodb+srv://${user}:${pass}@cluster0.g6wpo.mongodb.net/mentora`
 );
 
 const contentTypes = ["image", "video", "article", "audio"];
@@ -58,9 +64,9 @@ export const Content = mongoose.model("Content", contentSchema);
 export const Tags = mongoose.model("Tags", tagSchema);
 export const Link = mongoose.model("Link", linkSchema);
 
-module.exports({
+module.exports = {
   Users,
   Content,
   Tags,
   Link,
-});
+};
