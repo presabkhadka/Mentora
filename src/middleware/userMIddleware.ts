@@ -12,7 +12,7 @@ export default async function userMIddleware(
 ) {
   try {
     let token = req.headers.authorization?.split(" ")[1];
-    let JWT_PASS = process.env.JWT_PAS;
+    let JWT_PASS = process.env.JWT_PASS;
     if (!token) {
       res.status(401).json({
         msg: "No token found in headers",
@@ -20,7 +20,7 @@ export default async function userMIddleware(
       return;
     }
 
-    let decode = jwt.verify(token, JWT_PASS as string);
+    let decode = jwt.verify(token, JWT_PASS!);
     let userEmail = (decode as jwt.JwtPayload).email;
     let existingUser = await Users.findOne({
       email: userEmail,
