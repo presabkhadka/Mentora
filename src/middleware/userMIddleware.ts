@@ -20,9 +20,9 @@ export default async function userMIddleware(
       return;
     }
 
-    let decode =jwt.verify(token, JWT_PASS as string);
+    let decode = jwt.verify(token, JWT_PASS as string);
     let userEmail = (decode as jwt.JwtPayload).email;
-    let existingUser =await Users.findOne({
+    let existingUser = await Users.findOne({
       email: userEmail,
     });
 
@@ -35,10 +35,11 @@ export default async function userMIddleware(
 
     req.user = userEmail;
     next();
-
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error.message);
+      res.status(500).json({
+        msg: error.message,
+      });
     }
   }
 }
