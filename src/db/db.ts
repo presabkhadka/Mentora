@@ -1,5 +1,4 @@
 import mongoose, { mongo, Mongoose } from "mongoose";
-import { ref } from "process";
 
 mongoose.connect(
   "mongodb+srv://presabkhadka30:fRANqisUqmoJ5AkK@cluster0.g6wpo.mongodb.net/mentora"
@@ -9,6 +8,7 @@ const contentTypes = ["image", "video", "article", "audio"];
 
 const userSchema = new mongoose.Schema({
   username: String,
+  email: String,
   password: String,
 });
 
