@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import bcrypt from "bcrypt";
-import { Content, Users } from "../db/db";
+import { Content, Tags, Users } from "../db/db";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -86,22 +86,13 @@ export async function userLogin(req: Request, res: Response) {
 export async function addContent(req: Request, res: Response) {
   try {
     let { link, type, title, tags } = req.body;
+    let newTag;
 
-    let token = req.headers.authorization?.split(" ")[1];
-
-    let decoded = jwt.verify(token!, jwtPass!);
-
-    let userEmail = (decoded as jwt.JwtPayload).email;
-
-    if (!userEmail) {
-      res.status(401).json({
-        msg: "Unauthorized access",
-      });
-      return;
-    }
+    // @ts-ignore
+    let user = req.user;
 
     let existingUser = await Users.findOne({
-      email: userEmail,
+      email: user,
     });
 
     if (!existingUser) {
@@ -113,13 +104,33 @@ export async function addContent(req: Request, res: Response) {
 
     let userId = existingUser?._id;
 
-    await Content.create({
-      link,
-      tags,
-      title,
-      type,
-      userId: userId,
+    let existingTag = await Tags.findOne({
+      title: tags,
     });
+
+    if (!existingTag) {
+      newTag = await Tags.create({
+        title: tags,
+      });
+    }
+
+    if (existingTag) {
+      await Content.create({
+        link,
+        tags: existingTag._id,
+        title,
+        type,
+        userId: userId,
+      });
+    } else {
+      await Content.create({
+        link,
+        tags: newTag?._id,
+        title,
+        type,
+        userId: userId,
+      });
+    }
 
     res.status(201).json({
       msg: "Content created successfully",
@@ -135,20 +146,11 @@ export async function addContent(req: Request, res: Response) {
 
 export async function viewContent(req: Request, res: Response) {
   try {
-    let token = req.headers.authorization?.split(" ")[1];
-
-    let decoded = jwt.verify(token!, jwtPass!);
-
-    let userEmail = (decoded as jwt.JwtPayload).email;
-
-    if (!userEmail) {
-      res.status(401).json({
-        msg: "Unauthorized access",
-      });
-    }
+    // @ts-ignore
+    let user = req.user;
 
     let existingUser = await Users.findOne({
-      email: userEmail,
+      email: user,
     });
 
     let userId = existingUser!._id;
@@ -159,6 +161,44 @@ export async function viewContent(req: Request, res: Response) {
 
     res.status(200).json({
       contents,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        msg: error.message,
+      });
+    }
+  }
+}
+
+export async function deleteContent(req: Request, res: Response) {
+  try {
+    let { contentId } = req.params;
+
+    if (!contentId) {
+      res.status(400).json({
+        msg: "No content id found in parameters",
+      });
+      return;
+    }
+
+    let contentExists = await Content.findOne({
+      _id: contentId,
+    });
+
+    if (!contentExists) {
+      res.status(404).json({
+        msg: "No such content found in our db",
+      });
+      return;
+    }
+
+    await Content.deleteOne({
+      _id: contentId,
+    });
+
+    res.status(200).json({
+      msg: "Content deleted successfully",
     });
   } catch (error) {
     if (error instanceof Error) {
