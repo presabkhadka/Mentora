@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addContent,
+  deleteContent,
   userLogin,
   userSignup,
   viewContent,
@@ -13,5 +14,6 @@ userRouter.post("/signup", userSignup);
 userRouter.post("/login", userLogin);
 userRouter.post("/add-content", userMIddleware, addContent);
 userRouter.get("/content", userMIddleware, viewContent);
+userRouter.delete("/delete-content/:contentId", deleteContent);
 
 export { userRouter };
