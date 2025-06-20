@@ -33,6 +33,7 @@ export default async function userMIddleware(
       return;
     }
 
+    // @ts-ignore
     req.user = userEmail;
     next();
   } catch (error) {
