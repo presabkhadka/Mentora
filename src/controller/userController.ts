@@ -69,6 +69,18 @@ export async function userLogin(req: Request, res: Response) {
       return;
     }
 
+    let passwordMatch = await bcrypt.compare(
+      password,
+      existingUser.password as string
+    );
+
+    if (!passwordMatch) {
+      res.status(401).json({
+        msg: "Password didn't matched",
+      });
+      return;
+    }
+
     let token = jwt.sign({ email }, jwtPass!);
 
     res.status(200).json({
