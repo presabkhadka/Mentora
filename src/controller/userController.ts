@@ -220,3 +220,68 @@ export async function deleteContent(req: Request, res: Response) {
     }
   }
 }
+
+export async function youtubeContent(req: Request, res: Response) {
+  try {
+    // @ts-ignore
+    let user = req.user;
+
+    let existingUser = await Users.findOne({
+      email: user,
+    });
+
+    if (!existingUser) {
+      res.status(404).json({
+        msg: "No such  user found in our db",
+      });
+      return;
+    }
+    let contentType = "youtube";
+    let userId = existingUser._id;
+    let content = await Content.find({
+      userId: userId,
+      type: contentType,
+    });
+    res.status(200).json({
+      content,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      msg: error.message;
+    }
+  }
+}
+
+export async function twitterContent(req: Request, res: Response) {
+  try {
+    // @ts-ignore
+    let user = req.user;
+
+    let existingUser = await Users.findOne({
+      email: user,
+    });
+
+    if (!existingUser) {
+      res.status(404).json({
+        msg: "No such user found in our db",
+      });
+      return;
+    }
+
+    let userId = existingUser._id;
+    let contentType = "x";
+    let content = await Content.find({
+      userId,
+      type: contentType,
+    });
+    res.status(200).json({
+      content,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        msg: error.message,
+      });
+    }
+  }
+}
