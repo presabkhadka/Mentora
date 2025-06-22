@@ -10,7 +10,7 @@ mongoose.connect(
   `mongodb+srv://${user}:${pass}@cluster0.g6wpo.mongodb.net/mentora`
 );
 
-const contentTypes = ["youtube", "twitter", "article", "blog"];
+const contentTypes = ["youtube", "x"];
 
 const userSchema = new mongoose.Schema({
   username: String,
@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const contentSchema = new mongoose.Schema({
+  
   link: {
     type: String,
     require: true,
