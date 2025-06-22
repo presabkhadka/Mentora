@@ -169,7 +169,7 @@ export async function viewContent(req: Request, res: Response) {
 
     let contents = await Content.find({
       userId,
-    });
+    }).populate("tags");
 
     res.status(200).json({
       contents,
