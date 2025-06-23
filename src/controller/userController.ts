@@ -126,33 +126,26 @@ export async function addContent(req: Request, res: Response) {
       });
     }
 
-    if (existingTag) {
-      await Content.create({
-        link,
-        tags: existingTag._id,
-        title,
-        type,
-        userId: userId,
-      });
-    } else {
-      await Content.create({
-        link,
-        tags: newTag?._id,
-        title,
-        type,
-        userId: userId,
-      });
-    }
+    let createdContent = await Content.create({
+      link,
+      tags: existingTag ? existingTag._id : newTag?._id,
+      title,
+      type,
+      userId: userId,
+    });
 
     res.status(201).json({
       msg: "Content created successfully",
+      createdContent,
     });
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({
-        msg: error.message,
-      });
-    }
+    console.error("Add content error:", error);
+    res.status(500).json({
+      msg:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong with the server at the moment",
+    });
   }
 }
 
