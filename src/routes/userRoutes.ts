@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   addContent,
   deleteContent,
+  fetchingContents,
   twitterContent,
   userLogin,
   userSignup,
@@ -19,5 +20,6 @@ userRouter.get("/content", userMIddleware, viewContent);
 userRouter.delete("/delete-content/:contentId", userMIddleware, deleteContent);
 userRouter.get("/x-content", userMIddleware, twitterContent);
 userRouter.get("/yt-content", userMIddleware, youtubeContent);
+userRouter.get("/try", fetchingContents);
 
 export { userRouter };
